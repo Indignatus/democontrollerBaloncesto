@@ -38,19 +38,19 @@ public class jugadorController {
 //     return jugadorRepository.findByAsistoGreaterThan(30);
 //    }
 //
-//   @GetMapping("/orderByPoints")
-//   public List<Jugador> findAllOrderByPoints() {
-//        return jugadorRepository.findAllOrderByCanasto();
-//   }
+   @GetMapping("/orderByPoints")
+   public List<Jugador> findAllOrderByCanasto() {
+        return jugadorRepository.findAllByOrderByCanasto();
+   }
 ////
-//    @GetMapping("/greaterThanPoints/{points}")
-//    public List<Jugador>findByPointsGreaterThan(@PathVariable Integer points){
-//        return jugadorRepository.findByCanastoGreaterThan(points);
-//    }
-//    @GetMapping("/between/{points1}/{points2}")
-//    public List<Jugador>findByPointsBetween(@PathVariable Integer points1, Integer points2){
-//        return jugadorRepository.findByCanastoBetween(points1,points2);
-//    }
+    @GetMapping("/greaterThanPoints/{points}")
+    public List<Jugador>findByPointsGreaterThan(@PathVariable Integer points){
+        return jugadorRepository.findByCanastoGreaterThan(points);
+    }
+    @GetMapping("/between/{points1}/{points2}")
+    public List<Jugador>findByPointsBetween(@PathVariable Integer points1, Integer points2){
+        return jugadorRepository.findByCanastoBetween(points1,points2);
+    }
    /*@GetMapping("/posicion/{posicion}")
     public Map<Long,Jugador> findByPosicion(@PathVariable String posicion){
         return jugadorRepository.findByPosicion(posicion);
