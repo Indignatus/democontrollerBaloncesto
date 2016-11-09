@@ -1,12 +1,13 @@
 package com.example.controler;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.example.controler.DTO.EstadisticasPosicion;
 import com.example.domain.Jugador;
 import com.example.repository.JugadorRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
 
 @RestController
@@ -51,10 +52,29 @@ public class jugadorController {
     public List<Jugador>findByPointsBetween(@PathVariable Integer points1, Integer points2){
         return jugadorRepository.findByCanastoBetween(points1,points2);
     }
-   /*@GetMapping("/posicion/{posicion}")
-    public Map<Long,Jugador> findByPosicion(@PathVariable String posicion){
-        return jugadorRepository.findByPosicion(posicion);
-    } */
+
+   @GetMapping("/posicion")
+    public Map<String,Collection<Jugador>> findByPosicion(){
+
+//
+//       ArrayList<Jugador> jugadores = new ArrayList<>();
+//
+//       Map<String,List<Jugador>> posicionJugador = new HashMap<>();
+//
+//       posicionJugadores.
+//       forEach(posicionJugadore -> {
+//           posicionJugador.put(posicionJugadores.get(0),(List<Jugador>) posicionJugadores.get(1));
+//       });
+//        return posicionJugador;
+
+       List<Jugador> posicionJugadores = jugadorRepository.findByPosicion();
+
+       ListMultiMap<String, Jugador> posiciones = ArrayListMultimap.create();
+
+       Map<String, Jugador> estadisticasPosicionMap = new HashMap<>();
+       return null;
+    }
+
     @GetMapping("/posicionAndMedia")
     public Map<String, EstadisticasPosicion> findByPosicionAndMedia(){
 
@@ -77,4 +97,5 @@ public class jugadorController {
 
         return estadisticasPosicionMap;
     }
+
 }
