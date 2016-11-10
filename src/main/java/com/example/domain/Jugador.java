@@ -17,11 +17,12 @@ public class Jugador {
     private int canasto;
     private int asisto;
     private int reboto;
-    private String posicion;
+    @Enumerated(EnumType.STRING)
+    private Posicion posicion;
     @ManyToOne
     private Equipo equipo;
 
-    public Jugador(String nombre, LocalDate nacimiento, int canasto, int asisto, int reboto, String posicion) {
+    public Jugador(String nombre, LocalDate nacimiento, int canasto, int asisto, int reboto, Posicion posicion) {
         this.nombre = nombre;
         this.nacimiento = nacimiento;
         this.canasto = canasto;
@@ -54,7 +55,7 @@ public class Jugador {
         this.reboto = reboto;
     }
 
-    public void setPosicion(String posicion) {this.posicion = posicion;}
+    public void setPosicion(Posicion posicion) {this.posicion = posicion;}
 
     public Long getId() {
         return id;
@@ -80,7 +81,7 @@ public class Jugador {
         return reboto;
     }
 
-    public String getPosicion() {
+    public Posicion getPosicion() {
         return posicion;
     }
 

@@ -65,7 +65,7 @@ public interface JugadorRepositorio extends JpaRepository<Jugador, Long> {
 
 //
 //    List<Jugador> findByPoints(Integer points);
-//
+    List<Jugador> findAll();
     List<Jugador> findAllByOrderByCanasto();
     List<Jugador> findByCanastoGreaterThan(Integer points);
     List<Jugador> findByCanastoBetween(Integer min, Integer max);

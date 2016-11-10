@@ -1,10 +1,11 @@
 package com.example.controler;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.example.controler.DTO.EstadisticasPosicion;
 import com.example.domain.Jugador;
+import com.example.domain.Posicion;
 import com.example.repository.JugadorRepositorio;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +55,7 @@ public class jugadorController {
     }
 
    @GetMapping("/posicion")
-    public Map<String,Collection<Jugador>> findByPosicion(){
+    public Map<Posicion,Collection<Jugador>> findByPosicion(){
 
 //
 //       ArrayList<Jugador> jugadores = new ArrayList<>();
@@ -67,12 +68,19 @@ public class jugadorController {
 //       });
 //        return posicionJugador;
 
-       List<Jugador> posicionJugadores = jugadorRepository.findByPosicion();
+       List<Jugador> posicionJugadores = jugadorRepository.findAll();
 
-       ListMultiMap<String, Jugador> posiciones = ArrayListMultimap.create();
+       ListMultimap<Posicion, Jugador> posiciones = ArrayListMultimap.create();
 
-       Map<String, Jugador> estadisticasPosicionMap = new HashMap<>();
-       return null;
+       for(Jugador p: posicionJugadores){
+           posiciones.put(p.getPosicion(), p);
+       }
+       posicionJugadores.forEach(jugador ->
+       posiciones.put(jugador.getPosicion(), jugador));
+
+       System.out.println();
+
+       return posiciones.asMap();
     }
 
     @GetMapping("/posicionAndMedia")
