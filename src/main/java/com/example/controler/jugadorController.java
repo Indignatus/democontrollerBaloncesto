@@ -7,6 +7,7 @@ import com.example.repository.JugadorRepositorio;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -22,10 +23,9 @@ public class jugadorController {
 
         return jugadorRepository.save(jugador);
     }
-    @RequestMapping(method = RequestMethod.GET)
-    public List<Jugador> findAll(){
-        List<Jugador> jugadorList = new ArrayList<>();
-        return jugadorRepository.findAll();
+    @GetMapping
+    public List<Jugador> findAllOrderBy(@RequestParam("orderBy") String orderBy){
+        return jugadorRepository.findAll(new Sort(Sort.Direction.DESC,orderBy));
     }
     @RequestMapping(value = "/{id}",
         method = RequestMethod.GET)
@@ -105,5 +105,7 @@ public class jugadorController {
 
         return estadisticasPosicionMap;
     }
+
+
 
 }

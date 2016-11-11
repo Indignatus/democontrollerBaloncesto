@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.controler.DTO.EstadisticasPosicion;
 import com.example.domain.Jugador;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,6 +12,8 @@ import java.util.Map;
 
 @SuppressWarnings("JpaQlInspection")
 public interface JugadorRepositorio extends JpaRepository<Jugador, Long> {
+
+
 
 
     List<Jugador> findByNombre(String nombre);
