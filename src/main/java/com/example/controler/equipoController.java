@@ -33,11 +33,11 @@ public class equipoController {
 
         ListMultimap<String, Equipo> localidades = ArrayListMultimap.create();
 
-        for(Equipo p: posicionJugadores){
+        /*for(Equipo p: posicionJugadores){
             localidades.put(p.getLocalidad(), p);
-        }
-        posicionJugadores.forEach(jugador ->
-                localidades.put(jugador.getLocalidad(), jugador));
+        }*/
+        posicionJugadores.forEach(equipo ->
+                localidades.put(equipo.getLocalidad(), equipo));
 
         System.out.println();
 

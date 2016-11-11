@@ -23,10 +23,6 @@ public class jugadorController {
 
         return jugadorRepository.save(jugador);
     }
-    @GetMapping
-    public List<Jugador> findAllOrderBy(@RequestParam("orderBy") String orderBy){
-        return jugadorRepository.findAll(new Sort(Sort.Direction.DESC,orderBy));
-    }
     @RequestMapping(value = "/{id}",
         method = RequestMethod.GET)
     public Jugador findById(@PathVariable Long id) {
@@ -105,7 +101,13 @@ public class jugadorController {
 
         return estadisticasPosicionMap;
     }
-
+    @GetMapping
+    public List<Jugador> findAllOrderBy(@RequestParam(name = "orderBy", required = false) String orderBy){
+        if(orderBy != null) {
+            return jugadorRepository.findAll(new Sort(Sort.Direction.DESC, orderBy));
+        }
+        return jugadorRepository.findAll();
+    }
 
 
 }
