@@ -11,47 +11,55 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @RestController
 @RequestMapping("/jugadores")
 public class jugadorController {
     @Autowired
     private JugadorRepositorio jugadorRepository;
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Jugador createJugador(@RequestBody Jugador jugador){
+    public Jugador createJugador(@RequestBody Jugador jugador) {
 
         return jugadorRepository.save(jugador);
     }
+
     @RequestMapping(value = "/{id}",
-        method = RequestMethod.GET)
+            method = RequestMethod.GET)
     public Jugador findById(@PathVariable Long id) {
         Jugador jugador = jugadorRepository.findOne(id);
 
         return jugador;
     }
-//    @RequestMapping(value = "/byasistencias" ,method = RequestMethod.GET)
+
+    //    @RequestMapping(value = "/byasistencias" ,method = RequestMethod.GET)
 //    public List<Jugador> findByAssistenciasGreater(){
 //
 //     return jugadorRepository.findByAsistoGreaterThan(30);
 //    }
 //
-   @GetMapping("/orderByPoints")
-   public List<Jugador> findAllOrderByCanasto() {
+    @GetMapping("/orderByPoints")
+    public List<Jugador> findAllOrderByCanasto() {
         return jugadorRepository.findAllByOrderByCanasto();
-   }
-////
-    @GetMapping("/greaterThanPoints/{points}")
-    public List<Jugador>findByPointsGreaterThan(@PathVariable Integer points){
-        return jugadorRepository.findByCanastoGreaterThan(points);
-    }
-    @GetMapping("/between/{points1}/{points2}")
-    public List<Jugador>findByPointsBetween(@PathVariable Integer points1, Integer points2){
-        return jugadorRepository.findByCanastoBetween(points1,points2);
     }
 
-   @GetMapping("/posicion")
-    public Map<Posicion,Collection<Jugador>> findByPosicion(){
+    ////
+    @GetMapping("/greaterThanPoints/{points}")
+    public List<Jugador> findByPointsGreaterThan(@PathVariable Integer points) {
+        return jugadorRepository.findByCanastoGreaterThan(points);
+    }
+
+    @GetMapping("/between/{points1}/{points2}")
+    public List<Jugador> findByPointsBetween(@PathVariable Integer points1, Integer points2) {
+        return jugadorRepository.findByCanastoBetween(points1, points2);
+    }
+
+    @GetMapping("/posicion")
+    public Map<Posicion, Collection<Jugador>> findByPosicion() {
 
 //
 //       ArrayList<Jugador> jugadores = new ArrayList<>();
@@ -64,23 +72,33 @@ public class jugadorController {
 //       });
 //        return posicionJugador;
 
-       List<Jugador> posicionJugadores = jugadorRepository.findAll();
+        List<Jugador> posicionJugadores = jugadorRepository.findAll();
 
-       ListMultimap<Posicion, Jugador> posiciones = ArrayListMultimap.create();
+        ListMultimap<Posicion, Jugador> posiciones = ArrayListMultimap.create();
 
-       for(Jugador p: posicionJugadores){
-           posiciones.put(p.getPosicion(), p);
-       }
-       posicionJugadores.forEach(jugador ->
-       posiciones.put(jugador.getPosicion(), jugador));
+        for (Jugador p : posicionJugadores) {
+            posiciones.put(p.getPosicion(), p);
+        }
+        posicionJugadores.forEach(jugador ->
+                posiciones.put(jugador.getPosicion(), jugador));
 
-       System.out.println();
+        System.out.println();
 
-       return posiciones.asMap();
+        return posiciones.asMap();
     }
 
+    //    Ordenar por posicion con JAVA8
+    @GetMapping("/GroupByPosition")
+    public Map<Posicion, List<Jugador>> getJugadoresGroupByPosicion() {
+        return jugadorRepository
+                .findAll()
+                .parallelStream()
+                .collect(groupingBy(Jugador::getPosicion));
+    }
+
+
     @GetMapping("/posicionAndMedia")
-    public Map<String, EstadisticasPosicion> findByPosicionAndMedia(){
+    public Map<String, EstadisticasPosicion> findByPosicionAndMedia() {
 
         List<Object[]> estadisticasPosicions = jugadorRepository.findByPosicionAndMedia();
 
@@ -90,9 +108,9 @@ public class jugadorController {
                 forEach(estadisticasPosicion -> {
 
                     EstadisticasPosicion aux = new EstadisticasPosicion();
-                    aux.setPosicion((String)estadisticasPosicion[0]);
-                    aux.setMinCanastas((Integer)estadisticasPosicion[1]);
-                    aux.setMaxCanastas((Integer)estadisticasPosicion[2]);
+                    aux.setPosicion((String) estadisticasPosicion[0]);
+                    aux.setMinCanastas((Integer) estadisticasPosicion[1]);
+                    aux.setMaxCanastas((Integer) estadisticasPosicion[2]);
                     aux.setAvgCanastas((Double) estadisticasPosicion[3]);
 
                     estadisticasPosicionMap.put(aux.getPosicion(), aux);
@@ -101,10 +119,20 @@ public class jugadorController {
 
         return estadisticasPosicionMap;
     }
+//  OrderBy con @RequestParam y control de errores
     @GetMapping
-    public List<Jugador> findAllOrderBy(@RequestParam(name = "orderBy", required = false) String orderBy){
-        if(orderBy != null) {
-            return jugadorRepository.findAll(new Sort(Sort.Direction.DESC, orderBy));
+    public List<Jugador> findAllOrderBy(
+            @RequestParam(name = "orderBy", required = false) String orderBy,
+            @RequestParam(name = "direction", defaultValue = "ASC") String direccion
+    ) {
+        Sort sort;
+        if (orderBy != null) {
+            if (direccion.equals("ASC")) {
+                sort = new Sort(Sort.Direction.ASC, orderBy);
+            } else {
+                sort = new Sort(Sort.Direction.DESC, orderBy);
+            }
+            return jugadorRepository.findAll(sort);
         }
         return jugadorRepository.findAll();
     }
