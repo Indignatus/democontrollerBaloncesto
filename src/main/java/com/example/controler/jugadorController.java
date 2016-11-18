@@ -1,6 +1,7 @@
 package com.example.controler;
 
 import com.example.controler.DTO.EstadisticasPosicion;
+import com.example.domain.HeaderUtil;
 import com.example.domain.Jugador;
 import com.example.domain.Posicion;
 import com.example.repository.JugadorRepositorio;
@@ -9,11 +10,16 @@ import com.google.common.collect.ListMultimap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static sun.audio.AudioPlayer.player;
 
 @RestController
 @RequestMapping("/jugadores")
@@ -58,6 +64,7 @@ public class jugadorController {
         return jugadorRepository.findByCanastoBetween(points1, points2);
     }
 
+    //    Ordenar por posicion con multimap
     @GetMapping("/posicion")
     public Map<Posicion, Collection<Jugador>> findByPosicion() {
 
@@ -96,7 +103,7 @@ public class jugadorController {
                 .collect(groupingBy(Jugador::getPosicion));
     }
 
-
+    //Devolver un Map
     @GetMapping("/posicionAndMedia")
     public Map<String, EstadisticasPosicion> findByPosicionAndMedia() {
 
@@ -137,5 +144,22 @@ public class jugadorController {
         return jugadorRepository.findAll();
     }
 
+   //Control de errores agregando jugadores
+   @PostMapping
+   @ResponseStatus(HttpStatus.CREATED)
+   public ResponseEntity<Jugador> createJugadorControl(@RequestBody Jugador jugador) throws URISyntaxException {
+
+       if (jugador.getId() != null) {
+           return ResponseEntity.
+                   badRequest().
+                   headers(
+                           HeaderUtil.
+                                   createFailureAlert("player", "idexists", "A new player cannot already have an ID")).body(null);
+       }
+       Jugador result = jugadorRepository.save(jugador);
+       return ResponseEntity.created(new URI("/players/" + result.getId()))
+               .headers(HeaderUtil.createEntityCreationAlert("player", result.getId().toString()))
+               .body(result);
+   }
 
 }
