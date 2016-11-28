@@ -60,7 +60,7 @@ public class jugadorController {
     }
 
     @GetMapping("/between/{points1}/{points2}")
-    public List<Jugador> findByPointsBetween(@PathVariable Integer points1, Integer points2) {
+    public List<Jugador> findByPointsBetween(@PathVariable Integer points1, @PathVariable Integer points2) {
         return jugadorRepository.findByCanastoBetween(points1, points2);
     }
 
